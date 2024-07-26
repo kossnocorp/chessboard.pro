@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Board } from "../board/Board";
 import { Square, SquareFeedback, squareName, squares } from "../board/data";
 
-const defaultSeconds = 15;
+const defaultSeconds = 30;
 
 export function Vision() {
   const [started, setStarted] = useState<number>();
