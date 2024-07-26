@@ -11,7 +11,7 @@ export interface BoardProps {
 export function Board(props: BoardProps) {
   const { onClick, feedback } = props;
   return (
-    <div className="grid grid-cols-8 grid-rows-8 aspect-square">
+    <div className="grid grid-cols-8 grid-rows-8 aspect-square select-none">
       {squares.map((square) => (
         <Square
           square={square}

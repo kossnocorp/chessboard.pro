@@ -1,12 +1,6 @@
-import { cn, CNProps } from "crab";
-import {
-  Square as Square_,
-  SquareColor,
-  SquareFeedbackType,
-  squareName,
-  squares,
-} from "./data";
-import { useEffect, useState } from "react";
+import { cn } from "crab";
+import { useEffect, useRef, useState } from "react";
+import { Square as Square_, SquareColor, SquareFeedbackType } from "./data";
 
 export interface SquareProps {
   square: Square_;
@@ -17,12 +11,15 @@ export interface SquareProps {
 export function Square(props: SquareProps) {
   const { square, onClick, feedback } = props;
   const [blinking, setBlinking] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    if (!feedback) return;
+    if (!feedback || timerRef.current) return;
     setBlinking(true);
-    const timer = setTimeout(() => setBlinking(false), 500);
-    return () => clearTimeout(timer);
+    timerRef.current = setTimeout(() => {
+      setBlinking(false);
+      timerRef.current = undefined;
+    }, 500);
   }, [feedback]);
 
   return (
@@ -40,8 +37,8 @@ const squareCn = cn<{
 }>()
   .base("transition-colors duration-200")
   .color("black", {
-    white: "bg-white text-neutral-800",
-    black: "bg-neutral-800 text-white",
+    white: ["text-neutral-800", [{ blinking: false }, "bg-white "]],
+    black: ["text-white", [{ blinking: false }, "bg-neutral-800"]],
   })
   .feedback("correct", {})
   .blinking(false, {
