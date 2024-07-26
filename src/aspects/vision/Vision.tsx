@@ -104,7 +104,7 @@ function announceSquare(square: Square) {
   if ("speechSynthesis" in window) {
     const utterance = new SpeechSynthesisUtterance(squareName(square));
     utterance.lang = "en-US";
-    utterance.rate = 1.2; // Slightly faster than normal speech
+    utterance.rate = 1.2;
     window.speechSynthesis.speak(utterance);
   }
 }
