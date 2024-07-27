@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Board } from "../board/Board";
 import { Square, SquareFeedback, squareName, squares } from "../board/data";
+import { useVisionHistory } from "./history";
+import Link from "next/link";
 
 const defaultSeconds = 30;
 
@@ -12,12 +14,14 @@ export function Vision() {
   const timerRef = useRef<NodeJS.Timeout>();
   const [timeLeft, setTimeLeft] = useState(defaultSeconds);
   const [score, setScore] = useState<number>();
+  const [accuracy, setAccuracy] = useState<number>(0);
   const [totalSquares, setTotalSquares] = useState(0);
   const [feedback, setFeedback] = useState<SquareFeedback>();
   const [highScore, setHighScore] = useState(() => {
-    const stored = localStorage.getItem("highScore");
+    const stored = localStorage.getItem("visionHighScore");
     return (stored && parseInt(stored)) || 0;
   });
+  const { history, addRecord } = useVisionHistory();
 
   useEffect(() => {
     if (!started) return clearInterval(timerRef.current);
@@ -38,20 +42,29 @@ export function Vision() {
       setTimeLeft(defaultSeconds);
       if (typeof score === "number" && score > highScore) {
         setHighScore(score);
-        localStorage.setItem("highScore", score.toString());
+        localStorage.setItem("visionHighScore", score.toString());
       }
+      addRecord({ score: score || 0, time: Date.now(), accuracy });
+      localStorage.setItem("history", JSON.stringify(history));
     }
-  }, [timeLeft]);
+  }, [timeLeft, score, accuracy]);
 
   const handleSquareClick = (square: Square) => {
     if (!started || !squareToFind) return;
 
+    const newTotalSquares = totalSquares + 1;
+    let newScore = score || 0;
+
     if (square === squareToFind) {
-      setScore((score || 0) + 1);
+      newScore += 1;
+      setScore(newScore);
       setFeedback({ type: "correct", square: squareToFind });
     } else {
       setFeedback({ type: "incorrect", square: squareToFind });
     }
+
+    setTotalSquares(newTotalSquares);
+    setAccuracy(newScore / newTotalSquares);
 
     let nextSquare;
     do {
@@ -63,7 +76,6 @@ export function Vision() {
     );
 
     setSquareToFind(nextSquare);
-    setTotalSquares(totalSquares + 1);
   };
 
   useEffect(() => {
@@ -83,21 +95,26 @@ export function Vision() {
 
               <div className="text-4xl">
                 <span className="text-lime-400">{score}</span>
-                <span className="text-gray-700">/{totalSquares}</span>
+                <span className="text-gray-700">/{totalSquares}</span>{" "}
+                <span className="text-blue-400 ml-4">
+                  {(accuracy * 100).toFixed(1)}%
+                </span>
               </div>
             </div>
           ) : (
             <div className="flex items-center justify-center h-full">
-              {typeof score === "number" ? (
-                <span>
-                  <span className="text-orange-300 text-5xl">{score}</span>{" "}
-                  <span className="text-orange-600/50 text-5xl">
-                    ({highScore})
+              <Link href="/vision/history">
+                {typeof score === "number" ? (
+                  <span>
+                    <span className="text-orange-300 text-5xl">{score}</span>{" "}
+                    <span className="text-orange-600/50 text-5xl">
+                      ({highScore})
+                    </span>
                   </span>
-                </span>
-              ) : (
-                <span className="text-orange-300 text-5xl">{highScore}</span>
-              )}
+                ) : (
+                  <span className="text-orange-300 text-5xl">{highScore}</span>
+                )}
+              </Link>
             </div>
           )}
         </div>
