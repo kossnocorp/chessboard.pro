@@ -14,6 +14,10 @@ export function Vision() {
   const [score, setScore] = useState(0);
   const [totalSquares, setTotalSquares] = useState(0);
   const [feedback, setFeedback] = useState<SquareFeedback>();
+  const [highScore, setHighScore] = useState(() => {
+    const stored = localStorage.getItem("highScore");
+    return (stored && parseInt(stored)) || 0;
+  });
 
   useEffect(() => {
     if (!started) return clearInterval(timerRef.current);
@@ -32,6 +36,10 @@ export function Vision() {
       setStarted(undefined);
       setSquareToFind(undefined);
       setTimeLeft(defaultSeconds);
+      if (score > highScore) {
+        setHighScore(score);
+        localStorage.setItem("highScore", score.toString());
+      }
     }
   }, [timeLeft]);
 
@@ -57,17 +65,23 @@ export function Vision() {
   return (
     <div className="h-screen flex justify-center">
       <div className="grid grid-rows-[auto_1fr_auto]">
-        <div className="flex items-center justify-between h-40">
-          <div className="text-4xl text-neutral-400">
-            0:{timeLeft.toString().padStart(2, "0")}
-          </div>
+        <div className="h-40">
+          {started ? (
+            <div className="flex items-center justify-between">
+              <div className="text-4xl text-neutral-400">
+                0:{timeLeft.toString().padStart(2, "0")}
+              </div>
 
-          <div className="flex">
-            <div className="text-4xl text-lime-400">{score}</div>
-            {started && (
-              <div className="text-4xl text-gray-700">/{totalSquares}</div>
-            )}
-          </div>
+              <div className="text-4xl">
+                <span className="text-lime-400">{score}</span>
+                <span className="text-gray-700">/{totalSquares}</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <span className="text-orange-300 text-5xl">{highScore}</span>
+            </div>
+          )}
         </div>
 
         <Board onClick={handleSquareClick} feedback={feedback} />
@@ -79,7 +93,7 @@ export function Vision() {
             </div>
           ) : (
             <button
-              className="bg-lime-800 hover:bg-lime-700 rounded-xl text-2xl py-5 px-12"
+              className="bg-lime-800 hover:bg-lime-700 rounded-xl text-2xl py-5 px-12 select-none"
               onClick={() => {
                 setStarted(Date.now());
                 setScore(0);
