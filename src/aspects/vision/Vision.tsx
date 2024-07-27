@@ -11,7 +11,7 @@ export function Vision() {
   const [squareToFind, setSquareToFind] = useState<Square>();
   const timerRef = useRef<NodeJS.Timeout>();
   const [timeLeft, setTimeLeft] = useState(defaultSeconds);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState<number>();
   const [totalSquares, setTotalSquares] = useState(0);
   const [feedback, setFeedback] = useState<SquareFeedback>();
   const [highScore, setHighScore] = useState(() => {
@@ -36,7 +36,7 @@ export function Vision() {
       setStarted(undefined);
       setSquareToFind(undefined);
       setTimeLeft(defaultSeconds);
-      if (score > highScore) {
+      if (typeof score === "number" && score > highScore) {
         setHighScore(score);
         localStorage.setItem("highScore", score.toString());
       }
@@ -47,13 +47,22 @@ export function Vision() {
     if (!started || !squareToFind) return;
 
     if (square === squareToFind) {
-      setScore(score + 1);
+      setScore((score || 0) + 1);
       setFeedback({ type: "correct", square: squareToFind });
     } else {
       setFeedback({ type: "incorrect", square: squareToFind });
     }
 
-    setSquareToFind(pickRandomSquare());
+    let nextSquare;
+    do {
+      nextSquare = pickRandomSquare();
+    } while (
+      !nextSquare ||
+      nextSquare.file === squareToFind.file ||
+      nextSquare.rank === squareToFind.rank
+    );
+
+    setSquareToFind(nextSquare);
     setTotalSquares(totalSquares + 1);
   };
 
@@ -67,7 +76,7 @@ export function Vision() {
       <div className="grid grid-rows-[auto_1fr_auto]">
         <div className="h-40">
           {started ? (
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between h-full">
               <div className="text-4xl text-neutral-400">
                 0:{timeLeft.toString().padStart(2, "0")}
               </div>
@@ -79,7 +88,16 @@ export function Vision() {
             </div>
           ) : (
             <div className="flex items-center justify-center h-full">
-              <span className="text-orange-300 text-5xl">{highScore}</span>
+              {typeof score === "number" ? (
+                <span>
+                  <span className="text-orange-300 text-5xl">{score}</span>{" "}
+                  <span className="text-orange-600/50 text-5xl">
+                    ({highScore})
+                  </span>
+                </span>
+              ) : (
+                <span className="text-orange-300 text-5xl">{highScore}</span>
+              )}
             </div>
           )}
         </div>
