@@ -11,7 +11,10 @@ export interface VisionHistoryRecord {
 
 export function useVisionHistory() {
   const [history, setHistory] = useState<VisionHistoryRecord[]>(() => {
-    const stored = localStorage.getItem("visionHistory");
+    let stored;
+    try {
+      stored = localStorage.getItem("visionHistory");
+    } catch {}
     return (stored && JSON.parse(stored)) || [];
   });
 
@@ -19,7 +22,9 @@ export function useVisionHistory() {
     (record: VisionHistoryRecord) => {
       setHistory((history) => {
         const newHistory = [...history, record];
-        localStorage.setItem("visionHistory", JSON.stringify(newHistory));
+        try {
+          localStorage.setItem("visionHistory", JSON.stringify(newHistory));
+        } catch {}
         return newHistory;
       });
     },

@@ -18,7 +18,10 @@ export function Vision() {
   const [totalSquares, setTotalSquares] = useState(0);
   const [feedback, setFeedback] = useState<SquareFeedback>();
   const [highScore, setHighScore] = useState(() => {
-    const stored = localStorage.getItem("visionHighScore");
+    let stored;
+    try {
+      stored = localStorage.getItem("visionHighScore");
+    } catch {}
     return (stored && parseInt(stored)) || 0;
   });
   const { history, addRecord } = useVisionHistory();
@@ -42,10 +45,11 @@ export function Vision() {
       setTimeLeft(defaultSeconds);
       if (typeof score === "number" && score > highScore) {
         setHighScore(score);
-        localStorage.setItem("visionHighScore", score.toString());
+        try {
+          localStorage.setItem("visionHighScore", score.toString());
+        } catch {}
       }
       addRecord({ score: score || 0, time: Date.now(), accuracy });
-      localStorage.setItem("history", JSON.stringify(history));
     }
   }, [timeLeft, score, accuracy]);
 
