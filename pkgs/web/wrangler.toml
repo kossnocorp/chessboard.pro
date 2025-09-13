@@ -11,6 +11,7 @@ binding = "ASSETS"
 
 [vars]
 NEXT_PUBLIC_SITE_URL = "https://chessboard.pro"
+NEXT_PUBLIC_DOMAIN = "chessboard.pro"
 
 [[services]]
 binding = "WORKER_SELF_REFERENCE"
@@ -42,7 +43,7 @@ bucket_name = "chessboard-inc-cache"
 binding = "DB"
 database_name = "chessboard-web"
 database_id = "c3237761-53b9-4959-9e4b-fba8d1e2a27f" # NOTE: Keep in sync with ./drizzle.config.ts
-migrations_dir = "drizzle"
+migrations_dir = "./src/aspects/db/migrations"
 
 # Bind a Durable Object. Durable objects are a scale-to-zero compute primitive based on the actor model.
 # Durable Objects can live for as long as needed. Use these when you need a long-running "server", such as in realtime apps.

@@ -10,8 +10,7 @@ idiomatic_version_file_enable_tools = ["node"]
 
 [tasks.dev]
 description = "Run development server"
-run = "pnpm -F chessboard.pro dev"
-
+run = "pnpm -F @chessboard.pro/web dev"
 
 [env]
 # Default account ID, use .env to override

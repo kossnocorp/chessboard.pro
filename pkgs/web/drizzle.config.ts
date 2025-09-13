@@ -11,8 +11,8 @@ const token = process.env.CLOUDFLARE_D1_TOKEN;
 if (!token) throw new Error("Missing CLOUDFLARE_D1_TOKEN env var");
 
 export default defineConfig({
-  schema: "./src/db/schema.ts",
-  out: "./drizzle",
+  schema: "./src/aspects/db/schema.ts",
+  out: "./src/aspects/db/migrations",
   dialect: "sqlite",
   driver: "d1-http",
   dbCredentials: { accountId, databaseId, token },
