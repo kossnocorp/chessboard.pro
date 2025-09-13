@@ -83,7 +83,7 @@ export default function VisionHistoryPage() {
     const addDots = (
       className: string,
       yScale: d3.ScaleLinear<number, number>,
-      color: string
+      color: string,
     ) => {
       g.selectAll(`.${className}`)
         .data(history)
@@ -92,7 +92,7 @@ export default function VisionHistoryPage() {
         .attr("class", className)
         .attr("cx", (d) => x(new Date(d.time)))
         .attr("cy", (d) =>
-          yScale(className === "dot-score" ? d.score : d.accuracy)
+          yScale(className === "dot-score" ? d.score : d.accuracy),
         )
         .attr("r", 4)
         .attr("fill", color);
@@ -110,7 +110,7 @@ export default function VisionHistoryPage() {
         const [mouseX] = d3.pointer(event);
         const xDate = x.invert(mouseX);
         const bisect = d3.bisector(
-          (d: VisionHistoryRecord) => new Date(d.time)
+          (d: VisionHistoryRecord) => new Date(d.time),
         ).left;
         const index = bisect(history, xDate, 1);
         const d0 = history[index - 1];
@@ -161,7 +161,7 @@ export default function VisionHistoryPage() {
       .call(
         d3
           .axisRight(yAccuracy)
-          .tickFormat((d: d3.NumberValue) => `${(+d * 100).toFixed(0)}%`)
+          .tickFormat((d: d3.NumberValue) => `${(+d * 100).toFixed(0)}%`),
       )
       .call((g) => g.select(".domain").attr("stroke", "#555"))
       .call((g) => g.selectAll(".tick line").attr("stroke", "#555"))

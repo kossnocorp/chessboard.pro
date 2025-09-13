@@ -11,18 +11,19 @@
     "lint:fix": "oxlint --type-aware --fix",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "deploy:upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts && prettier env.d.ts --write",
     "db:generate": "drizzle-kit generate --config ./drizzle.config.ts",
     "db:push": "drizzle-kit push --config ./drizzle.config.ts",
     "db:studio": "drizzle-kit studio --config ./drizzle.config.ts",
-    "db:check": "drizzle-kit check --config ./drizzle.config.ts"
+    "db:check": "drizzle-kit check --config ./drizzle.config.ts",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.0.0-beta.27",
     "crab": "^1.13.0",
     "d3": "^7.9.0",
-    "drizzle-orm": "^0.36.4",
     "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.36.4",
     "next": "15.5.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
@@ -37,8 +38,9 @@
     "oxlint": "^1.15.0",
     "oxlint-tsgolint": "^0.2.0",
     "postcss": "^8.5.6",
-    "tsx": "^4.19.2",
+    "prettier": "^3.6.2",
     "tailwindcss": "^4.1.13",
+    "tsx": "^4.19.2",
     "typescript": "^5.9.2",
     "vercel": "^48.0.0",
     "wrangler": "^4.36.0"

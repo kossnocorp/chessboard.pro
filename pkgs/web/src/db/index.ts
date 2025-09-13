@@ -1,5 +1,5 @@
-import { drizzle } from 'drizzle-orm/d1';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { drizzle } from "drizzle-orm/d1";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 // Runtime D1 -> Drizzle adapter for OpenNext Cloudflare
 export function getDb() {
@@ -8,4 +8,3 @@ export function getDb() {
 }
 
 export type DB = ReturnType<typeof getDb>;
-

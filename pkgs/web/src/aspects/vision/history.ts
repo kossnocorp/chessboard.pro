@@ -28,7 +28,7 @@ export function useVisionHistory() {
         return newHistory;
       });
     },
-    [setHistory]
+    [setHistory],
   );
 
   return { history, addRecord };

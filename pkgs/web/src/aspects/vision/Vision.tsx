@@ -12,7 +12,7 @@ export function Vision() {
   const [started, setStarted] = useState<number>();
   const [squareToFind, setSquareToFind] = useState<Square>();
   const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(
-    undefined
+    undefined,
   );
   const [timeLeft, setTimeLeft] = useState(defaultSeconds);
   const [score, setScore] = useState<number>();
