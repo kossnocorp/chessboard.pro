@@ -11,7 +11,7 @@ export interface SquareProps {
 export function Square(props: SquareProps) {
   const { square, onClick, feedback } = props;
   const [blinking, setBlinking] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     if (!feedback || timerRef.current) return;

@@ -37,7 +37,8 @@
         "hverlin.mise-vscode",
         "tekumara.typos-vscode",
         "davidlday.languagetool-linter",
-        "bradlc.vscode-tailwindcss"
+        "bradlc.vscode-tailwindcss",
+        "oxc.oxc-vscode"
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "fish",

@@ -1,0 +1,6 @@
+# Cloudflare
+.wrangler/
+# Next.js
+.next/
+# Vercel
+.vercel/

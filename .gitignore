@@ -3,9 +3,3 @@ node_modules/
 .pnpm-store/
 # Rust
 /target/
-# Cloudflare
-.wrangler/
-# Next.js
-.next/
-# Vercel
-.vercel/

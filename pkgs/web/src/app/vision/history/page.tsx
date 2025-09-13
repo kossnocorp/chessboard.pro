@@ -218,7 +218,7 @@ export default function VisionHistoryPage() {
   );
 }
 
-const formatTick = (value: Date | d3.NumberValue, index: number): string => {
+const formatTick = (value: Date | d3.NumberValue, _index: number): string => {
   if (value instanceof Date) return d3.timeFormat("%b %d")(value);
   return value.toString();
 };

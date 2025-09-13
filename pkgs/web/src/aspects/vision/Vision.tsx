@@ -1,17 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Board } from "../board/Board";
 import { Square, SquareFeedback, squareName, squares } from "../board/data";
 import { useVisionHistory } from "./history";
-import Link from "next/link";
 
 const defaultSeconds = 30;
 
 export function Vision() {
   const [started, setStarted] = useState<number>();
   const [squareToFind, setSquareToFind] = useState<Square>();
-  const timerRef = useRef<NodeJS.Timeout>();
+  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(
+    undefined
+  );
   const [timeLeft, setTimeLeft] = useState(defaultSeconds);
   const [score, setScore] = useState<number>();
   const [accuracy, setAccuracy] = useState<number>(0);
@@ -24,7 +26,7 @@ export function Vision() {
     } catch {}
     return (stored && parseInt(stored)) || 0;
   });
-  const { history, addRecord } = useVisionHistory();
+  const { addRecord } = useVisionHistory();
 
   useEffect(() => {
     if (!started) return clearInterval(timerRef.current);
