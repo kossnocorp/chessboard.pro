@@ -11,3 +11,7 @@ idiomatic_version_file_enable_tools = ["node"]
 [tasks.dev]
 description = "Run development server"
 run = "pnpm -F chessboard.pro dev"
+
+
+[env]
+'_'.file = { path = ".env" }
