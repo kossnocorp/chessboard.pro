@@ -36,7 +36,8 @@
         "esbenp.prettier-vscode",
         "hverlin.mise-vscode",
         "tekumara.typos-vscode",
-        "davidlday.languagetool-linter"
+        "davidlday.languagetool-linter",
+        "bradlc.vscode-tailwindcss"
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "fish",
