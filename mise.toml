@@ -14,4 +14,7 @@ run = "pnpm -F chessboard.pro dev"
 
 
 [env]
+# Default account ID, use .env to override
+CLOUDFLARE_ACCOUNT_ID = "a882f484593b0536f22686b11f8ccc05"
+# NOTE: Keep it as the last line to ensure it loads after other env vars
 '_'.file = { path = ".env" }
