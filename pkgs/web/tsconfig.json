@@ -26,13 +26,12 @@
         "./src/*"
       ]
     },
-    "types": [
-      "@cloudflare/workers-types/2023-07-01"
-    ],
+    "types": [],
     "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
+    "env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
