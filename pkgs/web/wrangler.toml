@@ -1,15 +1,23 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "chessboard"
-compatibility_date = "2024-07-25"
-compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".vercel/output/static"
+main = ".open-next/worker.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
-# Automatically place your workloads in an optimal location to minimize latency.
-# If you are running back-end logic in a Pages Function, running it closer to your back-end infrastructure
-# rather than the end user may result in better performance.
-# Docs: https://developers.cloudflare.com/pages/functions/smart-placement/#smart-placement
-# [placement]
-# mode = "smart"
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "chessboard"
+
+# Next.js ISR caching
+[[r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "chessboard-inc-cache"
+
+## Additional bindings examples (KV, D1, DO, Queues, Services)
 
 # Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
 # Docs:
