@@ -1,14 +1,23 @@
 "use client";
 
 import {
+  importVisionHistoryAction,
+  listVisionHistoryAction,
+} from "@/aspects/vision/actions";
+import {
   useVisionHistory,
   VisionHistoryRecord,
 } from "@/aspects/vision/history";
 import * as d3 from "d3";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export default function VisionHistoryPage() {
-  const { history } = useVisionHistory();
+  const { history, clearHistory } = useVisionHistory();
+  const [server, setServer] = useState<{
+    loggedIn: boolean;
+    records: VisionHistoryRecord[];
+  }>({ loggedIn: false, records: [] });
+  const [importing, setImporting] = useState(false);
   const chartRef = useRef<SVGSVGElement | null>(null);
   const [tooltip, setTooltip] = useState({
     show: false,
@@ -17,8 +26,31 @@ export default function VisionHistoryPage() {
     content: "",
   });
 
+  // Load server-side records if logged in
   useEffect(() => {
-    if (history.length === 0 || !chartRef.current) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await listVisionHistoryAction();
+        if (!cancelled) {
+          setServer({ loggedIn: !!res.loggedIn, records: res.records || [] });
+        }
+      } catch {
+        // ignore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const data: VisionHistoryRecord[] = useMemo(
+    () => (server.loggedIn ? server.records : history),
+    [server, history],
+  );
+
+  useEffect(() => {
+    if (data.length === 0 || !chartRef.current) return;
 
     const svg = d3.select(chartRef.current);
     svg.selectAll("*").remove();
@@ -31,7 +63,7 @@ export default function VisionHistoryPage() {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xExtent = d3.extent(history, (d) => new Date(d.time)) as [Date, Date];
+    const xExtent = d3.extent(data, (d) => new Date(d.time)) as [Date, Date];
     const xPadding = 0.05 * (xExtent[1].getTime() - xExtent[0].getTime());
     const x = d3
       .scaleTime()
@@ -43,7 +75,7 @@ export default function VisionHistoryPage() {
 
     const yScore = d3
       .scaleLinear()
-      .domain([0, d3.max(history, (d) => d.score) as number])
+      .domain([0, d3.max(data, (d) => d.score) as number])
       .range([height, 0]);
 
     const yAccuracy = d3.scaleLinear().domain([0, 1]).range([height, 0]);
@@ -67,14 +99,14 @@ export default function VisionHistoryPage() {
       .style("opacity", 0);
 
     g.append("path")
-      .datum(history)
+      .datum(data)
       .attr("fill", "none")
       .attr("stroke", "gold")
       .attr("stroke-width", 2)
       .attr("d", scoreLine);
 
     g.append("path")
-      .datum(history)
+      .datum(data)
       .attr("fill", "none")
       .attr("stroke", "gray")
       .attr("stroke-width", 2)
@@ -86,7 +118,7 @@ export default function VisionHistoryPage() {
       color: string,
     ) => {
       g.selectAll(`.${className}`)
-        .data(history)
+        .data(data)
         .enter()
         .append("circle")
         .attr("class", className)
@@ -112,9 +144,9 @@ export default function VisionHistoryPage() {
         const bisect = d3.bisector(
           (d: VisionHistoryRecord) => new Date(d.time),
         ).left;
-        const index = bisect(history, xDate, 1);
-        const d0 = history[index - 1];
-        const d1 = history[index];
+        const index = bisect(data, xDate, 1);
+        const d0 = data[index - 1];
+        const d1 = data[index];
 
         const d =
           d1 &&
@@ -190,7 +222,25 @@ export default function VisionHistoryPage() {
       .style("text-anchor", "middle")
       .style("fill", "gray")
       .text("Accuracy");
-  }, [history, setTooltip]);
+  }, [data, setTooltip]);
+
+  const handleImport = useCallback(async () => {
+    try {
+      setImporting(true);
+      const res = await importVisionHistoryAction(history);
+      if (res.ok) {
+        const refreshed = await listVisionHistoryAction();
+        setServer({
+          loggedIn: !!refreshed.loggedIn,
+          records: refreshed.records || [],
+        });
+        // Clear local storage and hide the import button
+        clearHistory();
+      }
+    } finally {
+      setImporting(false);
+    }
+  }, [history, clearHistory]);
 
   return (
     <main>
@@ -214,6 +264,20 @@ export default function VisionHistoryPage() {
           </div>
         )}
       </div>
+      {server.loggedIn && history.length > 0 && (
+        <div className="mt-4">
+          <button
+            className="bg-lime-800 hover:bg-lime-700 rounded px-4 py-2"
+            onClick={handleImport}
+            disabled={importing}
+            title="Import local records to your account (marked as local)"
+          >
+            {importing
+              ? "Importing..."
+              : `Import ${history.length} local record(s)`}
+          </button>
+        </div>
+      )}
     </main>
   );
 }

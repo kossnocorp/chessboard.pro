@@ -7,6 +7,8 @@ export interface VisionHistoryRecord {
   time: number;
   /** Round accuracy (0.0-1.0). */
   accuracy: number;
+  // Keep for future; default {} for now
+  settings?: Record<string, unknown>;
 }
 
 export function useVisionHistory() {
@@ -31,5 +33,14 @@ export function useVisionHistory() {
     [setHistory],
   );
 
-  return { history, addRecord };
+  const clearHistory = useCallback(() => {
+    setHistory(() => {
+      try {
+        localStorage.removeItem("visionHistory");
+      } catch {}
+      return [];
+    });
+  }, [setHistory]);
+
+  return { history, addRecord, clearHistory };
 }

@@ -10,12 +10,21 @@ if (!databaseId) throw new Error("Missing CLOUDFLARE_D1_DATABASE_ID env var");
 const token = process.env.CLOUDFLARE_D1_TOKEN;
 if (!token) throw new Error("Missing CLOUDFLARE_D1_TOKEN env var");
 
+const dbPath = process.env.DRIZZLE_DB_PATH;
+
 export default defineConfig({
   schema: "./src/aspects/db/schema.ts",
   out: "./src/aspects/db/migrations",
-  dialect: "sqlite",
-  driver: "d1-http",
-  dbCredentials: { accountId, databaseId, token },
   verbose: true,
   strict: true,
+  ...(dbPath
+    ? {
+        dialect: "sqlite",
+        dbCredentials: { url: dbPath },
+      }
+    : {
+        dialect: "sqlite",
+        driver: "d1-http",
+        dbCredentials: { accountId, databaseId, token },
+      }),
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { recordVisionResultAction } from "@/aspects/vision/actions";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Board } from "../board/Board";
@@ -8,7 +9,7 @@ import { useVisionHistory } from "./history";
 
 const defaultSeconds = 30;
 
-export function Vision() {
+export function Vision({ loggedIn }: { loggedIn: boolean }) {
   const [started, setStarted] = useState<number>();
   const [squareToFind, setSquareToFind] = useState<Square>();
   const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(
@@ -47,11 +48,32 @@ export function Vision() {
       setTimeLeft(defaultSeconds);
       if (typeof score === "number" && score > highScore) {
         setHighScore(score);
-        try {
-          localStorage.setItem("visionHighScore", score.toString());
-        } catch {}
+        if (!loggedIn) {
+          try {
+            localStorage.setItem("visionHighScore", score.toString());
+          } catch {}
+        }
       }
-      addRecord({ score: score || 0, time: Date.now(), accuracy });
+      const time = Date.now();
+      (async () => {
+        if (loggedIn) {
+          try {
+            const res = await recordVisionResultAction({
+              score: score || 0,
+              time,
+              accuracy,
+              settings: {},
+            });
+            if (!res?.ok) {
+              addRecord({ score: score || 0, time, accuracy });
+            }
+          } catch {
+            addRecord({ score: score || 0, time, accuracy });
+          }
+        } else {
+          addRecord({ score: score || 0, time, accuracy });
+        }
+      })();
     }
   }, [timeLeft, score, accuracy]);
 
