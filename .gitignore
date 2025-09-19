@@ -4,7 +4,7 @@ node_modules/
 # Rust
 /target/
 # Secrets
-.env
-.env.*
-!.env.example
-!.env.*.example
+.env.local
+.env.*.local
+!.env.local.example
+!.env.*.local.example
