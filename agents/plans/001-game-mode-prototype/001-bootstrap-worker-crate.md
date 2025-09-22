@@ -7,7 +7,7 @@ Set up the `pkgs/game` Cloudflare Workers crate with Durable Object support, ali
 ## Tasks
 
 - [ ] **Scaffold `chessboard_pro_game` crate** — create a new workers-rs project in `pkgs/game` configured for Durable Objects.
-      Use `cargo generate cloudflare/workers-rs` or manual `cargo init --lib` to scaffold, ensure `Cargo.toml` sets `crate-type = ["cdylib"]`, add `workers = "*"`, and wire `wasm-bindgen`. Commit initial source files (`lib.rs`, `durable.rs`, etc.) and README stub.
+      Use `cargo generate cloudflare/workers-rs` or manual `cargo init --lib` to scaffold, ensure `Cargo.toml` sets `crate-type = ["cdylib"]`, add `workers = "*"`, and wire `wasm-bindgen`. Add initial source files (`lib.rs`, `durable.rs`, etc.) alongside a README stub describing the crate.
 - [ ] **Register crate in workspace tooling** — expose the new crate to cargo, pnpm, and mise workflows.
       Update root `Cargo.toml` `[workspace]` members, add any necessary `pnpm` scripts (e.g., `pnpm --filter @chessboard.pro/game ...`), and ensure `mise.toml` tasks (if any) cover building/testing the worker.
 - [ ] **Create Wrangler configuration** — define deployment config with Durable Object binding metadata.
